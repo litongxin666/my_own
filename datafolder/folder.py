@@ -154,47 +154,87 @@ class Test_Dataset(data.Dataset):
 
 
 class Attribute_Dataset(data.Dataset):
-    def __init__(self, data_dir, dataset_name, transforms=None, query_gallery='query' ):
+    def __init__(self, data_dir, dataset_name, transforms=None, train_val='train' ):
+
         train, query, gallery = import_MarketDuke_nodistractors(data_dir, dataset_name)
 
         if dataset_name == 'Market-1501':
-            self.train_attr, self.test_attr, self.label = import_Market1501Attribute_binary(data_dir)
+            train_attr, test_attr, self.label = import_Market1501Attribute_binary(data_dir)
         elif dataset_name == 'DukeMTMC-reID':
-            self.train_attr, self.test_attr, self.label = import_DukeMTMCAttribute_binary(data_dir)
+            train_attr, test_attr, self.label = import_DukeMTMCAttribute_binary(data_dir)
         else:
             print('Input should only be Market1501 or DukeMTMC')
 
-        if query_gallery == 'query':
-            self.test_data = query['data']
-            self.test_ids = query['ids']
-        elif query_gallery == 'gallery':
-            self.test_data = gallery['data']
-            self.test_ids = gallery['ids']
-        elif query_gallery == 'all':
-            self.test_data = gallery['data'] + query['data']
-            self.test_ids = gallery['ids']
+        self.num_ids = len(train['ids'])
+        self.num_labels = len(self.label)
+        distribution = np.zeros(self.num_labels)
+        for k, v in train_attr.items():
+            distribution += np.array(v)
+        self.distribution = distribution / len(train_attr)
+
+        if train_val == 'train':
+            self.train_data = train['data']
+            self.train_ids = train['ids']
+            self.train_attr = train_attr
+        elif train_val == 'query':
+            self.train_data = query['data']
+            self.train_ids = query['ids']
+            self.train_attr = test_attr
+        elif train_val == 'gallery':
+            self.train_data = gallery['data']
+            self.train_ids = gallery['ids']
+            self.train_attr = test_attr
         else:
-            print('Input shoud only be query or gallery;')
+            print('Input should only be train or val')
+
+        self.num_ids = len(self.train_ids)
 
         if transforms is None:
-            self.transforms = T.Compose([
-                T.Resize(size=(288, 144)),
-                T.ToTensor(),
-                T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-            ])
+            if train_val == 'train':
+                self.transforms = T.Compose([
+                    T.Resize(size=(288, 144)),
+                    T.RandomHorizontalFlip(),
+                    T.ToTensor(),
+                    T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+                ])
+            else:
+                self.transforms = T.Compose([
+                    T.Resize(size=(288, 144)),
+                    T.ToTensor(),
+                    T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+                ])
 
     def __getitem__(self, index):
 
-        img_path = self.test_data[index][0]
-        id = self.test_data[index][2]
-        label = np.asarray(self.test_attr[id])
+        img_path = self.train_data[index][0]
+        id = self.train_data[index][2]
+        label = np.asarray(self.train_attr[id])
+        label = torch.FloatTensor(label)
         data = Image.open(img_path)
+        data = np.array(data, dtype=float)
         data = self.transforms(data)
-        name = self.test_data[index][4]
+        #data = torch.FloatTensor(data)
+        name = self.train_data[index][4]
         return data, label, id, name
 
     def __len__(self):
-        return len(self.test_data)
+        return len(self.train_data)
+
+    def num_label(self):
+        return self.num_labels
+
+    def num_id(self):
+        return self.num_ids
 
     def labels(self):
         return self.label
+
+    def validate_image(self, img):
+        img = np.array(img, dtype=float)
+        if len(img.shape) < 3:
+            rgb = np.empty((64, 64, 3), dtype=np.float32)
+            rgb[:, :, 0] = img
+            rgb[:, :, 1] = img
+            rgb[:, :, 2] = img
+            img = rgb
+        return img.transpose(2, 0, 1)
