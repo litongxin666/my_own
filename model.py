@@ -6,6 +6,7 @@ import pdb
 from torchvision import models
 import torch.nn.init as init
 import torch.nn.functional as F
+from .resnet import resnet50
 
 class generator(nn.Module):
     def __init__(self):
@@ -87,7 +88,7 @@ class attribute(nn.Module):
         super(attribute,self).__init__()
         self.num_att = 30
         self.last_conv_stride = 2
-        self.base = models.resnet50(pretrained=True,last_conv_stride=self.last_conv_stride)
+        self.base = resnet50(pretrained=True, last_conv_stride=self.last_conv_stride)
         self.classifier = nn.Linear(2048, 256)
         self.classifier_2=nn.Linear(256, self.num_att)
         init.normal(self.classifier.weight, std=0.001)
