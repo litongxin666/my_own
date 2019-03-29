@@ -54,6 +54,8 @@ class Trainer(object):
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
+                if iteration % 5 == 0:
+                    print("Epoch: %d, d_loss= %f " % (epoch, loss.data.cpu().mean()))
             if (epoch) % 10 == 0:
                 path = os.path.join(self.checkpoints, self.save_path)
                 if not os.path.exists(path):
