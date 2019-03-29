@@ -86,8 +86,8 @@ class attribute(nn.Module):
     def __init__(self):
         super(attribute,self).__init__()
         self.num_att = 30
-        self.last_conv_stride = 2
-        self.base = models.resnet50(pretrained=True,last_conv_stride=self.last_conv_stride)
+        #self.last_conv_stride = 2
+        self.base = models.resnet50(pretrained=True)
         self.classifier = nn.Linear(2048, 256)
         self.classifier_2=nn.Linear(256, self.num_att)
         init.normal(self.classifier.weight, std=0.001)
@@ -95,6 +95,8 @@ class attribute(nn.Module):
 
     def forward(self, x):
         x = self.base(x)
+        print("x.shape[2:]",x.shape[2:])
+        print(x.size())
         x = F.avg_pool2d(x, x.shape[2:])
         x = x.view(x.size(0), -1)
         x_intermediate = self.classifier(x) #size 16 x 16 =256
