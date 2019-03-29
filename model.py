@@ -6,7 +6,7 @@ import pdb
 from torchvision import models
 import torch.nn.init as init
 import torch.nn.functional as F
-from .resnet import resnet50
+from resnet import resnet50
 
 class generator(nn.Module):
     def __init__(self):
@@ -96,13 +96,13 @@ class attribute(nn.Module):
 
     def forward(self, x):
         x = self.base(x)
-        print("x.shape[2:]",x.shape[2:])
-        print(x.size())
+        #print("x.shape[2:]",x.shape[2:])
+        #print(x.size())
         x = F.avg_pool2d(x, x.shape[2:])
         x = x.view(x.size(0), -1)
         x_intermediate = self.classifier(x) #size 16 x 16 =256
         x = self.classifier_2(x_intermediate)
-        x = self.softmax(x)
+        #x = self.softmax(x)
         return x,x_intermediate
 
 
