@@ -35,19 +35,18 @@ def extract_feat(feat_func, dataset, **kwargs):
 def attribute_evaluate(feat_func, dataset, **kwargs):
     print "extracting features for attribute recognition"
     pt_result = extract_feat(feat_func, dataset)
-    with open("/home/shenkai/ltx/pedestrian-attribute-recognition-pytorch/result.pkl",'w') as f:
-        pickle.dump(pt_result,f)
     # obain the attributes from the attribute dictionary
     print "computing attribute recognition result"
-    N = pt_result.shape[0] 
+    N = pt_result.shape[0]
     L = pt_result.shape[1]
     gt_result = np.zeros(pt_result.shape)
     # get the groundtruth attributes
     for idx, label in enumerate(dataset.label):
         gt_result[idx, :] = label
-    pt_result[pt_result>=0.5] = 1
-    pt_result[pt_result<0.5] = 0
+    pt_result[pt_result>=0] = 1
+    pt_result[pt_result<0] = 0
     return attribute_evaluate_lidw(gt_result, pt_result)
+
 
 def attribute_evaluate_lidw(gt_result, pt_result):
     """

@@ -31,6 +31,7 @@ from utils_attr import set_seed
 
 from datafolder.folder import Attribute_Dataset
 from datafolder.folder import Attribute_test
+from model import DeepMAR_ResNet50_ExtractFeature
 import model
 
 class Config(object):
@@ -243,7 +244,7 @@ transfer_optim_state(state=optimizer.state, device_id=0)  #????????????????
 
 # cudnn.benchmark = True
 # for evaluation
-feat_func_att = model.DeepMAR_ResNet50_ExtractFeature(model=model_w) #????????????????
+feat_func_att = DeepMAR_ResNet50_ExtractFeature(model=model_w) #????????????????
 
 def attribute_evaluate_subfunc(feat_func, test_set, **test_kwargs): 
     """ evaluate the attribute recognition precision """
