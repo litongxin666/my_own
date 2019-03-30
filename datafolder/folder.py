@@ -211,7 +211,7 @@ class Attribute_Dataset(data.Dataset):
         label = np.asarray(self.train_attr[id])
         label = torch.FloatTensor(label)
         data = Image.open(img_path)
-        data = np.array(data, dtype=float)
+        #data = np.array(data, dtype=float)
         data = self.transforms(data)
         #data = torch.FloatTensor(data)
         name = self.train_data[index][4]
