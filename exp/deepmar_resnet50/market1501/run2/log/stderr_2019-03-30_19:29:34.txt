@@ -1,8 +1,0 @@
-/home/litongxin/my_own/model.py:94: UserWarning: nn.init.normal is now deprecated in favor of nn.init.normal_.
-  init.normal(self.classifier.weight, std=0.001)
-/home/litongxin/my_own/model.py:95: UserWarning: nn.init.constant is now deprecated in favor of nn.init.constant_.
-  init.constant(self.classifier.bias, 0)
-Traceback (most recent call last):
-  File "train_deepmar_resnet50.py", line 191, in <module>
-    rate = train_set.weight()
-TypeError: 'list' object is not callable
