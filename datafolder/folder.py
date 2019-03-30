@@ -188,6 +188,7 @@ class Attribute_Dataset(data.Dataset):
             print('Input should only be train or val')
 
         self.num_ids = len(self.train_ids)
+        self.weight = np.mean(train_attr.astype('float32')==1, axis=0).tolist()
 
         if transforms is None:
             if train_val == 'train':
@@ -228,6 +229,9 @@ class Attribute_Dataset(data.Dataset):
 
     def labels(self):
         return self.label
+
+    def weight(self):
+        return self.weight
 
     def validate_image(self, img):
         img = np.array(img, dtype=float)

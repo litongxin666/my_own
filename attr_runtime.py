@@ -8,3 +8,4 @@ save_path = './result'
 
 trainer = Trainer(dataset_path,batch_size, num_workers, epochs,save_path)
 trainer.train()
+

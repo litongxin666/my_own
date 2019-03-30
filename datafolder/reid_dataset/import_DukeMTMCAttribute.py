@@ -118,9 +118,9 @@ def import_DukeMTMCAttribute(dataset_dir):
     return unified_train_atr,unified_test_atr,train_label
 
 def import_DukeMTMCAttribute_binary(dataset_dir):
-	train_duke_attr, test_duke_attr,label = import_DukeMTMCAttribute(dataset_dir)
-	for id in train_duke_attr:
-		train_duke_attr[id][:] = [x - 1 for x in train_duke_attr[id]]
-	for id in test_duke_attr:
-		test_duke_attr[id][:] = [x - 1 for x in test_duke_attr[id]]
-	return train_duke_attr, test_duke_attr, label
+    train_duke_attr, test_duke_attr, label = import_DukeMTMCAttribute(dataset_dir)
+    for id in train_duke_attr:
+        train_duke_attr[id][:] = [x - 1 for x in train_duke_attr[id]]
+    for id in test_duke_attr:
+        test_duke_attr[id][:] = [x - 1 for x in test_duke_attr[id]]
+    return train_duke_attr, test_duke_attr, label
