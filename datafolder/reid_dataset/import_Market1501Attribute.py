@@ -150,7 +150,7 @@ def import_Market1501Attribute(dataset_dir):
 def import_Market1501Attribute_binary(dataset_dir):
     train_market_attr, test_market_attr, label = import_Market1501Attribute(dataset_dir)
     #print(train_market_attr['1500'])
-    train_market_attr['1500'][:] = [x - 1 for x in train_market_attr['1500']]
+    #train_market_attr['1500'][:] = [x - 1 for x in train_market_attr['1500']]
     #print(train_market_attr['1500'])
     for id in train_market_attr:
         train_market_attr[id][:] = [x - 1 for x in train_market_attr[id]]

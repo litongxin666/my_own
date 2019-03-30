@@ -84,7 +84,7 @@ class discriminator(nn.Module):
 
 
 class attribute(nn.Module):
-    def __init__(self):
+    def __init__(self,**kwargs):
         super(attribute,self).__init__()
         self.num_att = 30
         self.last_conv_stride = 2
@@ -102,6 +102,32 @@ class attribute(nn.Module):
         x = self.classifier_2(x_intermediate)
         x = self.softmax(x)
         return x,x_intermediate
+
+
+class DeepMAR_ResNet50_ExtractFeature(object):
+    """
+    A feature extraction function
+    """
+    def __init__(self, model, **kwargs):
+        self.model = model
+
+    def __call__(self, imgs):
+        old_train_eval_model = self.model.training
+
+        # set the model to be eval
+        self.model.eval()
+
+        # imgs should be Variable
+        if not isinstance(imgs, Variable):
+            print 'imgs should be type: Variable'
+            raise ValueError
+        score = self.model(imgs)
+        score=F.sigmoid(score)
+        score = score.data.cpu().numpy()
+
+        self.model.train(old_train_eval_model)
+
+        return score
 
 
 
