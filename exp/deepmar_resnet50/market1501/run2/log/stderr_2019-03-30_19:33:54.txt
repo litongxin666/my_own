@@ -1,0 +1,10 @@
+/home/litongxin/my_own/model.py:94: UserWarning: nn.init.normal is now deprecated in favor of nn.init.normal_.
+  init.normal(self.classifier.weight, std=0.001)
+/home/litongxin/my_own/model.py:95: UserWarning: nn.init.constant is now deprecated in favor of nn.init.constant_.
+  init.constant(self.classifier.bias, 0)
+Traceback (most recent call last):
+  File "train_deepmar_resnet50.py", line 246, in <module>
+    feat_func_att = model.DeepMAR_ResNet50_ExtractFeature(model=model_w) #????????????????
+  File "/home/litongxin/anaconda3/envs/python3/lib/python3.6/site-packages/torch/nn/modules/module.py", line 532, in __getattr__
+    type(self).__name__, name))
+AttributeError: 'attribute' object has no attribute 'DeepMAR_ResNet50_ExtractFeature'

@@ -1,0 +1,8 @@
+/home/litongxin/my_own/model.py:94: UserWarning: nn.init.normal is now deprecated in favor of nn.init.normal_.
+  init.normal(self.classifier.weight, std=0.001)
+/home/litongxin/my_own/model.py:95: UserWarning: nn.init.constant is now deprecated in favor of nn.init.constant_.
+  init.constant(self.classifier.bias, 0)
+Traceback (most recent call last):
+  File "train_deepmar_resnet50.py", line 283, in <module>
+    for step, (imgs, targets) in enumerate(train_loader):
+ValueError: too many values to unpack (expected 2)

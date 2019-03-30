@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "train_deepmar_resnet50.py", line 171, in <module>
+    train_set = Attribute_Dataset(cfg.dataset_path, dataset_name='Market-1501')
+  File "/home/litongxin/my_own/datafolder/folder.py", line 191, in __init__
+    self.weight = np.mean(train_attr.astype('float32')==1, axis=0).tolist()
+AttributeError: 'dict' object has no attribute 'astype'

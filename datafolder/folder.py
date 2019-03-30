@@ -188,7 +188,9 @@ class Attribute_Dataset(data.Dataset):
             print('Input should only be train or val')
 
         self.num_ids = len(self.train_ids)
-        self.weight = np.mean(train_attr.astype('float32')==1, axis=0).tolist()
+        train_attr_temp=list(train_attr.values())
+        train_attr_temp=np.array(train_attr_temp)
+        self.weight = np.mean(train_attr_temp.astype('float32')==1, axis=0).tolist()
 
         if transforms is None:
             if train_val == 'train':
@@ -242,3 +244,48 @@ class Attribute_Dataset(data.Dataset):
             rgb[:, :, 2] = img
             img = rgb
         return img.transpose(2, 0, 1)
+class Attribute_test(data.Dataset):
+    def __init__(self, data_dir, dataset_name, transforms=None, query_gallery='query' ):
+        train, query, gallery = import_MarketDuke_nodistractors(data_dir, dataset_name)
+
+        if dataset_name == 'Market-1501':
+            self.train_attr, self.test_attr, self.label = import_Market1501Attribute_binary(data_dir)
+        elif dataset_name == 'DukeMTMC-reID':
+            self.train_attr, self.test_attr, self.label = import_DukeMTMCAttribute_binary(data_dir)
+        else:
+            print('Input should only be Market1501 or DukeMTMC')
+
+        if query_gallery == 'query':
+            self.test_data = query['data']
+            self.test_ids = query['ids']
+        elif query_gallery == 'gallery':
+            self.test_data = gallery['data']
+            self.test_ids = gallery['ids']
+        elif query_gallery == 'all':
+            self.test_data = gallery['data'] + query['data']
+            self.test_ids = gallery['ids']
+        else:
+            print('Input shoud only be query or gallery;')
+
+        if transforms is None:
+            self.transforms = T.Compose([
+                T.Resize(size=(288, 144)),
+                T.ToTensor(),
+                T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            ])
+
+    def __getitem__(self, index):
+
+        img_path = self.test_data[index][0]
+        id = self.test_data[index][2]
+        label = np.asarray(self.test_attr[id])
+        data = Image.open(img_path)
+        data = self.transforms(data)
+        name = self.test_data[index][4]
+        return data, label, id, name
+
+    def __len__(self):
+        return len(self.test_data)
+
+    def labels(self):
+        return self.label
