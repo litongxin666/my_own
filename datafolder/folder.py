@@ -244,6 +244,7 @@ class Attribute_Dataset(data.Dataset):
             rgb[:, :, 2] = img
             img = rgb
         return img.transpose(2, 0, 1)
+
 class Attribute_test(data.Dataset):
     def __init__(self, data_dir, dataset_name, transforms=None, query_gallery='query' ):
         train, query, gallery = import_MarketDuke_nodistractors(data_dir, dataset_name)
@@ -273,6 +274,8 @@ class Attribute_test(data.Dataset):
                 T.ToTensor(),
                 T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
             ])
+        test_attr_temp = list(self.test_attr.values())
+        self.target = np.array(test_attr_temp)
 
     def __getitem__(self, index):
 

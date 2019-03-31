@@ -13,14 +13,15 @@ def extract_feat(feat_func, dataset, **kwargs):
     """
     test_loader = torch.utils.data.DataLoader(
         dataset = dataset, batch_size = 32,
-        num_workers = 2, pin_memory = True)
+        num_workers = 4, pin_memory = True)
     # extract feature for all the images of test/val identities
     start_time = time.time()
     total_eps = len(test_loader)
     N = len(dataset.image)
     start = 0
-    for ep, (imgs, labels) in enumerate(test_loader):
-        imgs_var = Variable(imgs, volatile=True).cuda()
+    for ep, sample in enumerate(test_loader):
+        data, label, id, name=sample
+        imgs_var = Variable(data, volatile=True).cuda()
         feat_tmp = feat_func( imgs_var )
         batch_size = feat_tmp.shape[0]  #number of column
         if ep == 0:
@@ -42,7 +43,7 @@ def attribute_evaluate(feat_func, dataset, **kwargs):
     L = pt_result.shape[1]
     gt_result = np.zeros(pt_result.shape)
     # get the groundtruth attributes
-    for idx, label in enumerate(dataset.label):
+    for idx, label in enumerate(dataset.target):
         gt_result[idx, :] = label
     pt_result[pt_result>=0] = 1
     pt_result[pt_result<0] = 0
