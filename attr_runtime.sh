@@ -1,9 +1,5 @@
 python train_deepmar_resnet50.py \
-    --sys_device_ids="(0,)" \
-    --dataset=peta \
-    --partition_idx=0 \ #??
-    --split=trainval \
-    --test_split=test \
+    --sys_device_ids="(0,1,)" \
     --batch_size=32 \
     --resize="(224,224)" \
     --exp_subpath=deepmar_resnet50 \

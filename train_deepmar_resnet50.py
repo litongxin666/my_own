@@ -11,7 +11,7 @@ import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 from torch.nn.parallel import DataParallel
-import cPickle as pickle
+import pickle
 import time
 import argparse
 
@@ -45,7 +45,7 @@ class Config(object):
         parser.add_argument('--resize', type=eval, default=(224, 224))
         parser.add_argument('--mirror', type=str2bool, default=True)
         parser.add_argument('--batch_size', type=int, default=32)
-        parser.add_argument('--workers', type=int, default=2)
+        parser.add_argument('--workers', type=int, default=4)
         # model
         parser.add_argument('--num_att', type=int, default=30)
         parser.add_argument('--pretrained', type=str2bool, default=True)
@@ -189,7 +189,7 @@ model_w = torch.nn.DataParallel(model)
 
 # using the weighted cross entropy loss
 if cfg.weighted_entropy:
-    rate = train_set.weight()
+    rate = train_set.weight
 else:
     rate = None
 # compute the weight of positive and negative ？？？？？？？？？？？？？？？？？？？？？？
@@ -280,13 +280,14 @@ for epoch in range(start_epoch, cfg.total_epochs):
     dataset_L = len(train_loader)
     ep_st = time.time()
     
-    for step, (imgs, targets) in enumerate(train_loader):
+    for step, sample in enumerate(train_loader):
          
         step_st = time.time()
+        imgs, targets, id, name = sample
         imgs_var = Variable(imgs).cuda()
         targets_var = Variable(targets).cuda()
 
-        score = model_w(imgs_var)
+        score,score_inter = model_w(imgs_var)
 
         # compute the weight
         weights = torch.zeros(targets_var.shape)
@@ -301,6 +302,8 @@ for epoch in range(start_epoch, cfg.total_epochs):
 
         # loss for the attribute classification, average over the batch size
         targets_var[targets_var == -1] = 0
+        #print(type(score))
+        #print(type(targets_var))
         loss = criterion(score, targets_var, weight=Variable(weights.cuda()))*num_att
 
         optimizer.zero_grad()

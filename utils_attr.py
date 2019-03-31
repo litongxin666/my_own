@@ -1,5 +1,5 @@
 import os
-import cPickle as pickle
+import pickle
 import datetime
 import time
 # from contextlib import contextmanger
@@ -213,36 +213,26 @@ def transfer_optim_state(state, device_id=-1):
                 pass
             
 
-def load_state_dict(model, src_state_dict):
+#def load_state_dict(model, src_state_dict):
     """
     copy parameter from src_state_dict to model
     Arguments:
         model: A torch.nn.Module object
         src_state_dict: a dict containing parameters and persistent buffers
     """
-    from torch.nn import Parameter
-    dest_state_dict = model.state_dict()
-    for name, param in src_state_dict.items():
-        if name not in dest_state_dict:
-            continue
-        if isinstance(param, Parameter):
-            param = param.data
-        try:
-            dest_state_dict[name].copy_(param)
-        except Exception msg:
-            print("Warning: Error occurs when copying '{}': {}".format(name, str(msg)))
 
-    src_missing = set(dest_state_dict.keys()) - set(src_state_dict.keys())
-    if len(src_missing) > 0:
-        print ("Keys not found in source state_dict: ")
-        for n in src_missing:
-            print('\t', n)
 
-    dest_missint = set(src_state_dict.keys()) - set(dest_state_dict.keys())
-    if len(dest_missint):
-        print ("Keys not found in destination state_dict: ")
-        for n in dest_missint:
-            print('\t', n)
+#    src_missing = set(dest_state_dict.keys()) - set(src_state_dict.keys())
+#    if len(src_missing) > 0:
+#        print ("Keys not found in source state_dict: ")
+#        for n in src_missing:
+#            print('\t', n)
+
+#    dest_missint = set(src_state_dict.keys()) - set(dest_state_dict.keys())
+#    if len(dest_missint):
+#        print ("Keys not found in destination state_dict: ")
+#        for n in dest_missint:
+#            print('\t', n)
 
 def load_ckpt(modules_optims, ckpt_file, load_to_cpu=True, verbose=True):
     """
